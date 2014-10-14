@@ -3,50 +3,55 @@
 <head>
 	<meta charset="UTF-8">
 	<title>block-breaker</title>
+	<link rel="stylesheet" type="text/css" href="game-styles.css">
+	<link href='http://fonts.googleapis.com/css?family=Share+Tech' rel='stylesheet' type='text/css'>
 <script>
-// Ball start position
-var ballX  = 100;
-var ballY  = 200;
 
-//Player start position
-var playerX = canvasWidth/2;
-var playerY = canvasHeight;
-
-// Movement speed
-var dx = 5;
-var dy = 5;
+// We should check for canvas support first...
 
 // Canvas parameters
 var context;
 var canvasHeight = 500;
-var canvasWidth = 800;
+var canvasWidth  = 800;
+
+// Ball start dimensions
+var ballX = 100;
+var ballY = 200;
+
+//Player start dimensions
+var playerHeight = 30;
+var playerWidth  = 150;
+var playerX = canvasWidth/2 - playerWidth/2;
+var playerY = canvasHeight - playerHeight;
+
+// Movement speed
+var dx = 5;
+var dy = 5;
 
 // Other game elements
 var currentLevel = 1;
 
 // Start the game
 function init() {
-  context= gameCanvas.getContext('2d');
+  context = gameCanvas.getContext('2d');
   setInterval(draw, 10);
 }
 
 // Update the canvas
 function draw() {
     context.clearRect(0, 0, canvasWidth, canvasHeight);
+	context.beginPath();
     
     // Draw game objects
-    context.beginPath();
-
 	drawBall(context, ballX, ballY);
 	drawPlayer(context, playerX, playerY); // TODO
+	
+	context.closePath();
 
-    context.closePath();
-
-    // Update game objects position
+    // Update game objects
     updateBallAcceleration(dx, dy, 0);
 	checkCollision(ballX, ballY);
 	updateBallPosition();
-
 	updatePlayerPosition(); //TODO
 }
 
@@ -56,12 +61,15 @@ function updatePlayerPosition(){
 	// TODO
 }
 
-function drawPlayer(context, playerX, playerY) {
-	// context.fillStyle = "#000";
-	//    context.arc(ballX, ballY, 20, 0, Math.PI*2, true);
-	//    context.fill();
+function drawPlayer() {
+	// TODO: colour this
+	context.fillRect(
+		playerX, 
+		playerY, 
+		playerWidth, 
+		playerHeight
+	);
 }
-
 
 /* Update the ball's position. */
 function updateBallPosition(){
@@ -93,7 +101,9 @@ function updateBallAcceleration(dx, dy, acceleration_factor) {
 
 </script>
 <body onload="init();">
-  <canvas id="gameCanvas" width="800" height="500"style="border: 2px solid black;">
-  </canvas>
+	<section class="game-wrapper">
+		<section class="scoreboard">Scoreboard stuff</section>
+		<canvas id="gameCanvas" width="800" height="500"></canvas>
+	</section>
 </body>
 </html>
