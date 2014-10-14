@@ -34,8 +34,8 @@ function draw() {
 	context.beginPath();
     
     // Draw game objects
-	drawBall(context, ballX, ballY);
-	drawPlayer(context, playerX, playerY); // TODO
+	drawBall();
+	drawPlayer(); // TODO
 	
 	context.closePath();
 
@@ -62,16 +62,16 @@ function drawPlayer() {
 	);
 }
 
+function drawBall() {
+	context.fillStyle = "#00c39c";
+    context.arc(ballX, ballY, 20, 0, Math.PI*2, true);
+    context.fill();
+}
+
 /* Update the ball's position. */
 function updateBallPosition(){
 	ballX += dx; 
 	ballY += dy;
-}
-
-function drawBall(context, ballX, ballY) {
-	context.fillStyle = "#00c39c";
-    context.arc(ballX, ballY, 20, 0, Math.PI*2, true);
-    context.fill();
 }
 
 /* Keep the ball within the canvas dimensions. */
