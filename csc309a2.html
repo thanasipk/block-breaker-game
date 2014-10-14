@@ -1,0 +1,73 @@
+<!doctype <!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>block-breaker</title>
+<script>
+// Ball start position
+var ballX  = 100;
+var ballY  = 200;
+
+// Physics ball movement
+var dx = 5;
+var dy = 5;
+
+// Canvas parameters
+var context;
+var canvasHeight = 500;
+var canvasWidth = 800;
+
+// Other game elements
+var currentLevel = 1;
+
+// Start the game
+function init() {
+  context= gameCanvas.getContext('2d');
+  setInterval(draw, 10);
+}
+
+// Update the canvas
+function draw() {
+    context.clearRect(0, 0, canvasWidth, canvasHeight);
+    context.beginPath();
+    context.fillStyle = "#00c39c";
+    // Draws a circle of radius 20 at the coordinates 100,100 on the canvas
+    context.arc(ballX, ballY, 20, 0, Math.PI*2, true);
+    context.closePath();
+    context.fill();
+
+    updateBallAcceleration(dx, dy, 0);
+	checkCollision(ballX, ballY);
+	updateBallPosition();
+}
+
+/********* Helper functions *********/
+
+/* Keep the ball within the canvas dimensions. */
+function checkCollision(ballX, ballY) {
+	if (ballX < 0 || ballX > canvasWidth) {
+		dx =- dx;
+	}; 
+	if (ballY < 0 || ballY > canvasHeight) {
+		dy =- dy;
+	};
+}
+
+/* Update the ball's position. */
+function updateBallPosition(){
+	ballX += dx; 
+	ballY += dy;
+}
+
+/* Needed for second level, when acceleration increases */
+function updateBallAcceleration(dx, dy, acceleration_factor) {
+	dx += acceleration_factor;
+	dy += acceleration_factor;
+}
+
+</script>
+<body onload="init();">
+  <canvas id="gameCanvas" width="800" height="500"style="border: 2px solid black;">
+  </canvas>
+</body>
+</html>
