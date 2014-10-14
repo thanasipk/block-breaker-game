@@ -8,7 +8,11 @@
 var ballX  = 100;
 var ballY  = 200;
 
-// Physics ball movement
+//Player start position
+var playerX = canvasWidth/2;
+var playerY = canvasHeight;
+
+// Movement speed
 var dx = 5;
 var dy = 5;
 
@@ -29,19 +33,47 @@ function init() {
 // Update the canvas
 function draw() {
     context.clearRect(0, 0, canvasWidth, canvasHeight);
+    
+    // Draw game objects
     context.beginPath();
-    context.fillStyle = "#00c39c";
-    // Draws a circle of radius 20 at the coordinates 100,100 on the canvas
-    context.arc(ballX, ballY, 20, 0, Math.PI*2, true);
-    context.closePath();
-    context.fill();
 
+	drawBall(context, ballX, ballY);
+	drawPlayer(context, playerX, playerY); // TODO
+
+    context.closePath();
+
+    // Update game objects position
     updateBallAcceleration(dx, dy, 0);
 	checkCollision(ballX, ballY);
 	updateBallPosition();
+
+	updatePlayerPosition(); //TODO
 }
 
 /********* Helper functions *********/
+
+function updatePlayerPosition(){
+	// TODO
+}
+
+function drawPlayer(context, playerX, playerY) {
+	// context.fillStyle = "#000";
+	//    context.arc(ballX, ballY, 20, 0, Math.PI*2, true);
+	//    context.fill();
+}
+
+
+/* Update the ball's position. */
+function updateBallPosition(){
+	ballX += dx; 
+	ballY += dy;
+}
+
+function drawBall(context, ballX, ballY) {
+	context.fillStyle = "#00c39c";
+    context.arc(ballX, ballY, 20, 0, Math.PI*2, true);
+    context.fill();
+}
 
 /* Keep the ball within the canvas dimensions. */
 function checkCollision(ballX, ballY) {
@@ -51,12 +83,6 @@ function checkCollision(ballX, ballY) {
 	if (ballY < 0 || ballY > canvasHeight) {
 		dy =- dy;
 	};
-}
-
-/* Update the ball's position. */
-function updateBallPosition(){
-	ballX += dx; 
-	ballY += dy;
 }
 
 /* Needed for second level, when acceleration increases */
