@@ -9,12 +9,22 @@
     <script src="js/game-engine.js"></script>
   </head>
 
-  <body onload="init();">
+  <body>
     <section class="game-wrapper">
-      <section class="scoreboard">Your Score</section>
+
+      <section class="scoreboard">
+        Your Score
+      </section>
+
       <canvas id="gameCanvas">
         Your browser does not support canvas!
       </canvas>
+
+      <div id="gameover">
+        <h1>GAME OVER</h1>
+        <button id="play-again">Play Again</button>
+      </div>
+
     </section>
   </body>
 </html>

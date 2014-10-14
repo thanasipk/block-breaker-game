@@ -14,5 +14,16 @@
   background: #34495e;
 }
 
+#gameover {
+  position: absolute;
+  top: 250px;
+  left: 260px;
+  background: lightyellow;
+  padding: 2em 5em;
+  text-align: center;
+  opacity: 0.7;
+  display: none;
+}
+
 .game-wrapper {
 }

@@ -1,35 +1,66 @@
-// We should probably check for canvas support first...
+// IE 9+
+document.addEventListener('DOMContentLoaded', init);
 
 // Canvas parameters
-var gameCanvas;
+var canvas;
 var context;
 var canvasHeight = 500;
 var canvasWidth  = 800;
 
-// Ball start dimensions
-var ballX = 100;
-var ballY = 200;
+// Ball properties
+var ballX;
+var ballY;
+var ballRadius;
 
 //Player start dimensions
-var playerHeight = 30;
+var playerHeight = 25;
 var playerWidth  = 150;
 var playerX = canvasWidth / 2 - playerWidth / 2;
 var playerY = canvasHeight - playerHeight;
 
 // Movement speed
-var dx = 5;
-var dy = 5;
+var dx;
+var dy;
 
 // Other game elements
 var currentLevel = 1;
+var timer;
+var blocks;
+var gameoverEl;
 
-// Start the game
+// initialize the default parameters
 function init() {
-  gameCanvas = document.getElementById("gameCanvas");
-  context = gameCanvas.getContext('2d');
-  gameCanvas.height = canvasHeight;
-  gameCanvas.width = canvasWidth;
-  setInterval(draw, 10);
+  canvas = document.getElementById("gameCanvas");
+  context = canvas.getContext('2d');
+  canvas.height = canvasHeight;
+  canvas.width  = canvasWidth;
+  gameoverEl = document.getElementById("gameover");
+  startGame();
+}
+
+// Common setup before start of every game
+function resetGameState() {
+  // ball start dimensions
+  ballX = 100;
+  ballY = 200;
+  // 3 rows of blocks
+  blocks = [[1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1]];
+  // hide game over notice
+  gameoverEl.style.display = "none";
+}
+
+// Start the very first game
+function startGame() {
+  resetGameState();
+  // initial settings
+  ballRadius = 15;
+  // movement speed
+  dx = 5;
+  dy = 5;
+  // start game timer
+  timer = setInterval(draw, 10);
 }
 
 // Update the canvas
@@ -68,7 +99,7 @@ function drawPlayer() {
 
 function drawBall() {
   context.fillStyle = "#00c39c";
-  context.arc(ballX, ballY, 20, 0, Math.PI * 2, true);
+  context.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
   context.fill();
 }
 
@@ -80,12 +111,19 @@ function updateBallPosition() {
 
 /* Keep the ball within the canvas dimensions. */
 function checkCollision(ballX, ballY) {
-  if (ballX < 0 || ballX > canvasWidth) {
+
+  // boundary
+  if (ballX - ballRadius < 0 || ballX + ballRadius > canvasWidth) {
     dx *= -1;
   }
-  if (ballY < 0 || ballY > canvasHeight) {
+  if (ballY - ballRadius < 0 || ballY  + ballRadius > canvasHeight) {
     dy *= -1;
   }
+}
+
+function gameOver() {
+  clearInterval(timer);
+  gameoverEl.style.display = "block";
 }
 
 /* Needed for second level, when acceleration increases */
