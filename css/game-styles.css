@@ -1,17 +1,17 @@
 .scoreboard {
-	height: 100px; 
-	width: 800px;
-	border: 2px solid #2c3e50;
-	background: #2c3e50;
-	color: #ecf0f1;
-	font-family: 'Share Tech', sans-serif;
-	font-size: 3em;
-	text-align: center;
+  height: 100px;
+  width: 800px;
+  border: 2px solid #2c3e50;
+  background: #2c3e50;
+  color: #ecf0f1;
+  font-family: 'Share Tech', sans-serif;
+  font-size: 3em;
+  text-align: center;
 }
 
 #gameCanvas {
-	border: 2px solid #34495e;
-	background: #34495e;
+  border: 2px solid #34495e;
+  background: #34495e;
 }
 
 .game-wrapper {

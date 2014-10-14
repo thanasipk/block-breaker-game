@@ -1,20 +1,20 @@
-<!doctype <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8">
+    <title>block-breaker</title>
+    <meta name="description" content="ATARI breakout implemented with Canvas">
+    <link rel="stylesheet" type="text/css" href="css/game-styles.css">
+    <link href='http://fonts.googleapis.com/css?family=Share+Tech' rel='stylesheet' type='text/css'>
+    <script src="js/game-engine.js"></script>
+  </head>
 
-<head>
-	<meta charset="UTF-8">
-	<title>block-breaker</title>
-	<link rel="stylesheet" type="text/css" href="css/game-styles.css">
-	<link href='http://fonts.googleapis.com/css?family=Share+Tech' rel='stylesheet' type='text/css'>
-	<script src="js/game-engine.js"></script>
-</head>
-
-<body onload="init();">
-	<section class="game-wrapper">
-		<section class="scoreboard">Scoreboard stuff</section>
-		<canvas id="gameCanvas" width="800" height="500">
-			Your browser does not support canvas!
-		</canvas>
-	</section>
-</body>
+  <body onload="init();">
+    <section class="game-wrapper">
+      <section class="scoreboard">Your Score</section>
+      <canvas id="gameCanvas">
+        Your browser does not support canvas!
+      </canvas>
+    </section>
+  </body>
 </html>
