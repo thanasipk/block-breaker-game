@@ -34,19 +34,22 @@ Ball.prototype = {
     } else {
       this.speedX -= acceleration_factor;
     }
-    if (this.speedX > 0) {
+    if (this.speedY > 0) {
       this.speedY += acceleration_factor;
     } else {
       this.speedY -= acceleration_factor;
     }
   },
   handleBoundaryCollision: function () {
+    // hit left or right side
     if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) {
       this.speedX *= -1;
     }
+    // hit top
     if (this.y - this.radius < 0) {
       this.speedY *= -1;
     }
+    // hit bottom
     if (this.y  + this.radius > canvas.height) {
       gameOver();
     }
@@ -54,14 +57,95 @@ Ball.prototype = {
 };
 
 // Object containing the blocks
-function Blocks() {}
+function Blocks() {
+  this.height = 20;
+}
 
-Blocks.prototype.reset = function () {
-  this.loc = [
-    [1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1]
-  ];
+Blocks.prototype = {
+  reset: function () {
+    // put the blocks back into place
+    this.loc = [
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1]
+    ]
+    this.colors = [[], [], [], [], [], []];
+    this.width = Math.floor(canvas.width / this.loc[0].length);
+
+    for (var row = 0; row < this.loc.length; row++){
+      for (var col = 0; col < this.loc[row].length; col++) {
+        this.colors[row][col] = "rgb(" +
+          randomFromTo(100, 255) + "," +
+          randomFromTo(100, 255) + "," +
+          randomFromTo(100, 255) + ")";
+      }
+    }
+  },
+  draw: function () {
+    for (var row = 0; row < this.loc.length; row++){
+      for (var col = 0; col < this.loc[row].length; col++) {
+        this.drawSingleBlock(col, row, this.loc[row][col]);
+      }
+    }
+  },
+  drawSingleBlock: function (x, y, existence) {
+    // check if a block still exist at that location
+    if (!existence) return;
+
+    context.save();
+    context.beginPath();
+
+    context.fillStyle = this.colors[y][x];
+
+    context.fillRect(
+      x * this.width,
+      y * this.height,
+      this.width,
+      this.height
+    );
+
+    context.closePath();
+    context.stroke();
+    context.restore();
+  },
+  hasCollide: function (block_x, block_y) {
+    var has_collide = false;
+
+    has_collide =
+      ball.x + ball.radius >= block_x * this.width &&
+      ball.x - ball.radius <= (block_x + 1) * this.width &&
+      ball.y + ball.radius >= block_y * this.height &&
+      ball.y - ball.radius <= (block_y + 1) * this.height
+
+    // has collide from side
+    if (has_collide &&
+        !(ball.x + ball.radius + ball.speedX >= block_x * this.width &&
+          ball.x - ball.radius - ball.speedX <= (block_x + 1) * this.width)) {
+      ball.speedX *= -1;
+    }
+
+    // has collide from top or bottom
+    if (has_collide &&
+        !(ball.y + ball.radius + ball.speedY >= block_y * this.height &&
+          ball.y - ball.radius - ball.speedY <= (block_y + 1) * this.height)) {
+      ball.speedY *= -1;
+    }
+
+    return has_collide;
+  },
+  detectCollision: function () {
+    for (var row = 0; row < this.loc.length; row++){
+      for (var col = 0; col < this.loc[row].length; col++) {
+        if (this.loc[row][col] && this.hasCollide(col, row)) {
+          this.loc[row][col] = 0;
+          points += 100;
+        }
+      }
+    }
+  }
 };
 
 // Player - the paddle
@@ -72,7 +156,7 @@ function Player() {
 
 Player.prototype = {
   reset: function () {
-    /* center the bar */
+    /* center the paddle */
     this.x = canvas.width / 2 - this.width / 2;
     this.y = canvas.height - this.height;
   },
@@ -85,12 +169,28 @@ Player.prototype = {
       this.height
     );
   },
+  hasCollide: function () {
+    // test if the ball touches the paddle
+    return ball.x + ball.radius >= this.x &&
+      ball.x - ball.radius <= this.x + this.width &&
+      ball.y + ball.radius >= this.y
+  },
+  detectCollision: function () {
+    // detect collision and handle it
+    if (this.hasCollide()) {
+      // basic implementation - just bounce it back
+      ball.speedY = -Math.abs(ball.speedY);
+    }
+  },
   updatePosition: function () {
+    // check keyboard input
     if (input.isDown('LEFT') || input.isDown('a')) {
-      this.x -= 10;
+      if (this.x >= 0)
+        this.x -= 10;
     }
     if (input.isDown('RIGHT') || input.isDown('d')) {
-      this.x += 10;
+      if (this.x + this.width <= canvas.width)
+        this.x += 10;
     }
   }
 };
@@ -106,7 +206,7 @@ var gameoverEl;
 var gameoverButton;
 
 
-// initialize the default parameters
+// initialize the default global parameters
 function init() {
   // setup canvas
   canvas = document.getElementById("gameCanvas");
@@ -124,6 +224,7 @@ function init() {
   gameoverButton = document.getElementById("play-again");
   gameoverButton.onclick = startGame;
 
+  // also start the game
   startGame();
 }
 
@@ -154,24 +255,26 @@ function draw() {
   context.beginPath();
 
   // Draw game objects
-  ball.draw();
+  blocks.draw();
   player.draw();
+  ball.draw();
 
   context.closePath();
 
   // Update game objects
   ball.updateSpeed(0);
-  checkCollision();
   ball.updatePosition();
+
+  player.detectCollision();
+  blocks.detectCollision();
+  ball.handleBoundaryCollision();
+
   player.updatePosition();
   document.getElementById("points").innerHTML = points++;
 }
 
-/********* Helper functions *********/
-
-/* Keep the ball within the canvas dimensions. */
-function checkCollision() {
-  ball.handleBoundaryCollision();
+function randomFromTo(from, to) {
+  return Math.floor(Math.random() * (to + 1 - from) + from);
 }
 
 function gameOver() {
