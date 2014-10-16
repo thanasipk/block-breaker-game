@@ -136,6 +136,16 @@ Blocks.prototype = {
 
     return has_collide;
   },
+	allCleared: function() {
+		// check if all blocks are gone
+		for (var blockRow = 0; blockRow < blocks.loc.length; blockRow++) {
+			// if the row is empty, stop checking
+			if (eval(blocks.loc[blockRow].join("+")) > 0) {
+				return false;
+			}
+		}
+		return true;
+	},
   detectCollision: function () {
     for (var row = 0; row < this.loc.length; row++){
       for (var col = 0; col < this.loc[row].length; col++) {
@@ -161,7 +171,7 @@ Player.prototype = {
     this.y = canvas.height - this.height;
   },
   draw: function () {
-    context.fillStyle = "#66CCFF";
+    context.fillStyle = "#66ccff";
     context.fillRect(
       this.x,
       this.y,
@@ -196,7 +206,7 @@ Player.prototype = {
 };
 
 // Other game elements
-var currentLevel;
+var currentLevel = 1;
 var points;
 var gameLoop;
 var ball;
@@ -204,7 +214,6 @@ var blocks;
 var player;
 var gameoverEl;
 var gameoverButton;
-
 
 // initialize the default global parameters
 function init() {
@@ -244,7 +253,6 @@ function resetStates() {
 function startGame() {
   resetStates();
   points = 0;
-  currentLevel = 1;
   // start game loop
   gameLoop = setInterval(draw, 10);
 }
@@ -258,7 +266,6 @@ function draw() {
   blocks.draw();
   player.draw();
   ball.draw();
-
   context.closePath();
 
   // Update game objects
@@ -271,6 +278,20 @@ function draw() {
 
   player.updatePosition();
   document.getElementById("points").innerHTML = points++;
+  // Current game ended
+  if (blocks.allCleared()) {
+  	// First time win, move to second level
+  	if (currentLevel == 1) {
+      currentLevel = 2;
+  		// Start game with increased acceleration ball
+  		// Implementing this
+  	}
+  	else {
+  		// They were on the second level already, then beat the game
+			document.getElementById("gameover").innerHTML = "You beat the game! :D";
+			gameOver();
+  	}
+  }
 }
 
 function randomFromTo(from, to) {
