@@ -278,20 +278,11 @@ function draw() {
 
   player.updatePosition();
   document.getElementById("points").innerHTML = points++;
-  // Current game ended
+  
+  // Current game finished
   if (blocks.allCleared()) {
-  	// First time win, move to second level
-  	if (currentLevel == 1) {
-      currentLevel = 2;
-  		// Start game with increased acceleration ball
-  		// Implementing this
-  	}
-  	else {
-  		// They were on the second level already, then beat the game
-			document.getElementById("gameover").innerHTML = "You beat the game! :D";
-			gameOver();
-  	}
-  }
+  	handleGameOver();
+ }
 }
 
 function randomFromTo(from, to) {
@@ -302,4 +293,18 @@ function gameOver() {
   clearInterval(gameLoop);
   gameoverEl.style.display = "block";
   gameoverButton.focus();
+}
+
+function handleGameOver() {
+  // First time win, move to second level
+ 	if (currentLevel == 1) {
+    currentLevel = 2;
+    // Start game with increased acceleration ball
+  	// Implementing this
+  }
+  else {
+  	// They were on the second level already, then beat the game
+		document.getElementById("gameover").innerHTML = "You beat the game! :D";
+		gameOver();
+  }
 }
