@@ -59,28 +59,20 @@ Ball.prototype = {
 // Object containing the blocks
 function Blocks() {
   this.height = 20;
+  this.colors = [[], [], [], [], [], []];
 }
 
 Blocks.prototype = {
   reset: function () {
     // put the blocks back into place
-    // this.loc = [
-    //   [0, 0, 0, 0, 0, 0, 0, 0],
-    //   [1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1]
-    // ]
     this.loc = [
       [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 1]
+      [1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1]
     ]
-    this.colors = [[], [], [], [], [], []];
     this.width = Math.floor(canvas.width / this.loc[0].length);
 
     for (var row = 0; row < this.loc.length; row++){
@@ -262,23 +254,15 @@ function startGame() {
   resetStates();
   points = 0;
   // start game loop
-  gameLoop = setInterval(draw, 10);
+  gameLoop = setInterval(update, 10);
 }
 
 // Update the canvas
-function draw() {
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  context.beginPath();
-
-  // Draw game objects
-  blocks.draw();
-  player.draw();
-  ball.draw();
-  context.closePath();
-
+function update() {
   // Update game objects
-  ball.updateSpeed(0);
   ball.updatePosition();
+
+  redraw();
 
   player.detectCollision();
   blocks.detectCollision();
@@ -291,6 +275,18 @@ function draw() {
   if (blocks.allCleared()) {
   	gameOver();
  }
+}
+
+function redraw() {
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.beginPath();
+
+  // Draw game objects
+  blocks.draw();
+  player.draw();
+  ball.draw();
+
+  context.closePath();
 }
 
 function randomFromTo(from, to) {
@@ -306,29 +302,36 @@ function gameOverPopup() {
 function gameOver() {
 
   // Player beat level 1
- 	if (currentLevel == 1 && blocks.allCleared()) {
+  if (currentLevel == 1 && blocks.allCleared()) {
     // Start game with increased acceleration ball
-  	gameoverButton.innerHTML = "Hurray! Try the second level";
-		gameoverButton.onclick = startLevel(2, 3);
+    redraw(); // draw the new frame
+    gameoverEl.children[0].innerHTML = "Hurray! You beat the first level";
+    gameoverButton.innerHTML = "Play the second level";
+    gameoverButton.onclick = function(){startLevel(2, 2)};
   }
 
   // Player lost normally on level 1
- 	else if (currentLevel == 1) {
- 		// Just restart the first level
- 		gameoverButton.innerHTML = "first level, try again!";
- 		gameoverButton.onclick = startLevel(1, 0);
+  else if (currentLevel == 1) {
+    // Just restart the first level
+    gameoverEl.children[0].innerHTML = "GAME OVER";
+    gameoverButton.innerHTML = "1st level, try again!";
+    gameoverButton.onclick = function(){startLevel(1, 0)};
   }
 
   // Player beat level 2
- 	else if (currentLevel == 2 && blocks.allCleared()) {
-  	gameoverEl.innerHTML = "You beat the game! :D";
+  else if (currentLevel == 2 && blocks.allCleared()) {
+    redraw(); // draw the new frame
+    gameoverEl.children[0].innerHTML = "You beat the game! :D";
+    gameoverButton.innerHTML = "Reset game";
+    gameoverButton.onclick = function(){startLevel(1, -2)};
   }
 
   // Player lost normally on level 2
- 	else if (currentLevel == 2) {
- 		// Start level 2 again
- 		gameoverButton.innerHTML = "second level, try again!";
-    gameoverButton.onclick = startLevel(2, 0);
+  else if (currentLevel == 2) {
+    // Start level 2 again
+    gameoverEl.children[0].innerHTML = "GAME OVER";
+    gameoverButton.innerHTML = "2nd level, try again!";
+    gameoverButton.onclick = function(){startLevel(2, 0)};
   }
   gameOverPopup();
 }
