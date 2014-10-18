@@ -178,6 +178,14 @@ Blocks.prototype = {
     // Yellow block row
     this.given_colors[7] = "rgb(241, 196, 15)";
     this.given_colors[8] = this.given_colors[7];
+  },
+  rowRevealed: function(row_number) {
+  	// Where row_number=1 is the top-most row
+  	// If the row below row_number has a block revealed, return true
+	if (eval(this.loc[row_number+1].join("+")) < this.loc[0].length) {
+		return true;
+	}
+	return false;
   }
 };
 
@@ -185,10 +193,15 @@ Blocks.prototype = {
 function Player() {
   this.height = 25;
   this.width  = 150;
+  this.has_shrunk = false;
 }
 
 Player.prototype = {
   reset: function () {
+    /* Reset width shrinking */
+    this.width  = 150;
+    this.has_shrunk = false;
+
     /* center the paddle */
     this.x = canvas.width / 2 - this.width / 2;
     this.y = canvas.height - this.height;
@@ -225,6 +238,13 @@ Player.prototype = {
       if (this.x + this.width <= canvas.width)
         this.x += 10;
     }
+  },
+  shrinkPaddle: function() {
+  	// Prevents repeated paddle shrinking
+  	if (!this.has_shrunk) {
+		this.width /= 2;	
+  	}
+  	this.has_shrunk = true;
   }
 };
 
@@ -293,7 +313,12 @@ function update() {
 
   player.updatePosition();
   document.getElementById("points").innerHTML = points++;
-  
+
+  // If the orange row is revealed, shrink
+  if (blocks.rowRevealed(4)) {
+  	player.shrinkPaddle();
+  }
+
   // Current game finished
   if (blocks.allCleared()) {
   	gameOver();
