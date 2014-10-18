@@ -256,6 +256,10 @@ Player.prototype = {
   	for (var hearts = 0; hearts < this.lives; hearts++) {
 	  playerLives.children[hearts + 1].style.display = "inline";  		
   	}
+  },
+  loseLife: function() {
+    playerLives.children[this.lives].style.display = "none";
+    this.lives -= 1;
   }
 };
 
@@ -359,12 +363,11 @@ function gameOver() {
     player.lives -= 1;
 
     redraw(); // draw the new frame
-    gameoverEl.children[0].innerHTML = document.getElementById("game-over-popup").innerHTML;
-    gameoverButton.innerHTML = "Lemme try again!";
+    setPopup("game-over-popup", "Lemme try again!");   
 
     // Default ball speed
-    if (currentLevel == 1) ball_speed = 0;
-    if (currentLevel == 2) ball_speed = -2;
+    if (currentLevel == 1) var ball_speed = 0;
+    if (currentLevel == 2) var ball_speed = -2;
 
     gameoverButton.onclick = function(){startLevel(1, ball_speed, 3)};
   }
@@ -373,44 +376,32 @@ function gameOver() {
   else if (currentLevel == 1 && blocks.allCleared()) {
     // Start game with increased acceleration ball
     redraw(); // draw the new frame
-    gameoverEl.children[0].innerHTML = document.getElementById("game-level-won-popup").innerHTML;
-    gameoverButton.innerHTML = "Play the second level";
+    setPopup("game-level-won-popup", "Play the second level");   
     gameoverButton.onclick = function(){startLevel(2, 2, player.lives)};
     //document.getElementById("level").innerHTML = currentLevel;
   }
 
   // Player lost normally on level 1
   else if (currentLevel == 1) {
-
-  	// Remove a life from the player
-    playerLives.children[player.lives].style.display = "none";
-    player.lives -= 1;
-
+  	player.loseLife();
     // Restart the first level
-    gameoverEl.children[0].innerHTML = document.getElementById("game-lost-popup").innerHTML;
-    gameoverButton.innerHTML = "1st level, try again!";
+    setPopup("game-lost-popup", "1st level, try again!"); 
     gameoverButton.onclick = function(){startLevel(1, 0, player.lives)};
   }
 
   // Player beat level 2
   else if (currentLevel == 2 && blocks.allCleared()) {
     redraw(); // draw the new frame
-    gameoverEl.children[0].innerHTML = document.getElementById("game-won-popup").innerHTML;
-    gameoverButton.innerHTML = "Reset game";
+    setPopup("game-won-popup", "Reset game"); 
     gameoverButton.onclick = function(){startLevel(1, -2, 3)};
     //document.getElementById("level").innerHTML = currentLevel;
   }
 
   // Player lost normally on level 2
   else if (currentLevel == 2) {
-
-    // Remove a life from the player
-    playerLives.children[player.lives].style.display = "none";
-    player.lives -= 1;
-
+  	player.loseLife();
     // Start level 2 again
-    gameoverEl.children[0].innerHTML = document.getElementById("game-lost-popup").innerHTML;
-    gameoverButton.innerHTML = "2nd level, try again!";
+    setPopup("game-lost-popup", "2nd level, try again!"); 
     gameoverButton.onclick = function(){startLevel(2, 0, player.lives)};
   }
   gameOverPopup();
@@ -435,4 +426,9 @@ function checkSpecialScenarios() {
   if (blocks.allCleared()) {
   	gameOver();
  }
+}
+
+function setPopup(popup_id, popup_content) {
+	gameoverEl.children[0].innerHTML = document.getElementById(popup_id).innerHTML;
+	gameoverButton.innerHTML = popup_content;
 }
