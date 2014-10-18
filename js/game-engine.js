@@ -314,15 +314,7 @@ function update() {
   player.updatePosition();
   document.getElementById("points").innerHTML = points++;
 
-  // If the orange row is revealed, shrink
-  if (blocks.rowRevealed(4)) {
-  	player.shrinkPaddle();
-  }
-
-  // Current game finished
-  if (blocks.allCleared()) {
-  	gameOver();
- }
+  checkSpecialScenarios();
 }
 
 function redraw() {
@@ -388,4 +380,17 @@ function startLevel(new_level, ball_speed) {
 	currentLevel = new_level;
 	startGame();
 	ball.updateSpeed(ball_speed);
+}
+
+function checkSpecialScenarios() {
+  // Check if the player needs to shrink
+  if (blocks.rowRevealed(4)) {
+    // If the orange row is revealed, shrink
+  	player.shrinkPaddle();
+  }
+
+  // Check if the player has beat the level
+  if (blocks.allCleared()) {
+  	gameOver();
+ }
 }
