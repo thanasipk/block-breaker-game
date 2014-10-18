@@ -12,16 +12,33 @@
 
   <body>
     <section class="game-wrapper">
+
+      <!-- game screen -->
       <section class="scoreboard">
-        <div>Your Score</div>
-        <span id="points">0</span>
+        
+        <div id="player-lives-row" style="display:block !important">
+          <div style="display:inline;">Lives Left</div>
+          <img src="img/life.png" class="player-life" />
+          <img src="img/life.png" class="player-life" />
+          <img src="img/life.png" class="player-life" />
+        </div>
+        
+        <div id="name-info-row" style="display:block !important">
+          <div style="display:inline;">Score</div>
+        </div>
+        
+        <div id="number-row" style="display:block !important">
+          <div style="display:inline;" id="points">0</span>      
+        </div>
+      
       </section>
 
+      <!-- game screen -->
       <canvas id="gameCanvas">
         Your browser does not support canvas!
       </canvas>
 
-      <section>
+      <section style="display:inline-block">
         <p>Use the left and right key on your keyboard to move the paddle</p>
       </section>
 
@@ -31,8 +48,8 @@
       </div>
 
       <!-- Game popups -->
-      <div id="game-over-popup">
-        GAME OVER 
+      <div id="game-lost-popup">
+        Oh no, you lost a life! 
         <img class="popup-emoji" src="img/trans-scared-face.png"/>
       </div>
 
@@ -46,6 +63,11 @@
         Hurray! <img class="popup-emoji" src="img/trans-smile-face.png"/>
         <br />
         You beat the first level
+      </div>
+
+      <div id="game-over-popup">
+        No more lives!
+        <img class="popup-emoji" src="img/trans-crying-emoji.png"/>
       </div>
 
     </section>

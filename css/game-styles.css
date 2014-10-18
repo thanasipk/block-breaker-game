@@ -27,6 +27,7 @@
   opacity: 0.95;
 }
 
+#game-lost-popup,
 #game-over-popup,
 #game-won-popup,
 #game-level-won-popup {
@@ -58,4 +59,10 @@
 #play-again:active {
   position: relative;
   top: 1px;
+}
+
+.player-life {
+  display: inline;
+  width: 35px;
+  height: 35px;
 }

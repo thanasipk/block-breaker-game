@@ -68,7 +68,7 @@ function Blocks() {
 
 Blocks.prototype = {
   reset: function () {
-    // put the blocks back into place
+    //put the blocks back into place
     this.loc = [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -80,6 +80,7 @@ Blocks.prototype = {
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 	]
+
     this.width = Math.floor(canvas.width / this.loc[0].length);
     this.initGivenColors(); // Establish the block colours
 
@@ -142,16 +143,16 @@ Blocks.prototype = {
 
     return has_collide;
   },
-	allCleared: function() {
-		// check if all blocks are gone
-		for (var blockRow = 0; blockRow < blocks.loc.length; blockRow++) {
-			// if the row is empty, stop checking
-			if (eval(blocks.loc[blockRow].join("+")) > 0) {
-				return false;
-			}
-		}
-		return true;
-	},
+  allCleared: function() {
+  	// check if all blocks are gone
+  	for (var blockRow = 0; blockRow < blocks.loc.length; blockRow++) {
+  	  // if the row is empty, stop checking
+	  if (eval(blocks.loc[blockRow].join("+")) > 0) {
+	    return false;
+	  }
+    }
+	return true;
+  },
   detectCollision: function () {
     for (var row = 0; row < this.loc.length; row++){
       for (var col = 0; col < this.loc[row].length; col++) {
@@ -180,9 +181,9 @@ Blocks.prototype = {
     this.given_colors[8] = this.given_colors[7];
   },
   rowRevealed: function(row_number) {
-  	// Where row_number=1 is the top-most row
-  	// If the row below row_number has a block revealed, return true
-	if (eval(this.loc[row_number+1].join("+")) < this.loc[0].length) {
+  	// Where row_number=1 is the top-most visible row
+  	// If the row below row_number has a block missing, return true
+	if (eval(this.loc[row_number + 1].join("+")) < this.loc[0].length) {
 		return true;
 	}
 	return false;
@@ -191,6 +192,7 @@ Blocks.prototype = {
 
 // Player - the paddle
 function Player() {
+  this.lives = 3;
   this.height = 25;
   this.width  = 150;
   this.has_shrunk = false;
@@ -198,6 +200,10 @@ function Player() {
 
 Player.prototype = {
   reset: function () {
+
+  	/* Reset lost lives */
+  	this.lives = 3;
+
     /* Reset width shrinking */
     this.width  = 150;
     this.has_shrunk = false;
@@ -245,6 +251,11 @@ Player.prototype = {
 		this.width /= 2;	
   	}
   	this.has_shrunk = true;
+  },
+  reset_lives: function() {
+  	for (var hearts = 0; hearts < this.lives; hearts++) {
+	  playerLives.children[hearts + 1].style.display = "inline";  		
+  	}
   }
 };
 
@@ -272,6 +283,7 @@ function init() {
   player = new Player();
 
   // game over screen setup
+  playerLives = document.getElementById("player-lives-row")
   gameoverEl = document.getElementById("gameover");
   gameoverButton = document.getElementById("play-again");
   gameoverButton.onclick = startGame;
@@ -341,21 +353,43 @@ function gameOverPopup() {
 
 function gameOver() {
 
+  // Player ran out of lives
+  if (player.lives == 1) {
+    playerLives.children[player.lives].style.display = "none";
+    player.lives -= 1;
+
+    redraw(); // draw the new frame
+    gameoverEl.children[0].innerHTML = document.getElementById("game-over-popup").innerHTML;
+    gameoverButton.innerHTML = "Lemme try again!";
+
+    // Default ball speed
+    if (currentLevel == 1) ball_speed = 0;
+    if (currentLevel == 2) ball_speed = -2;
+
+    gameoverButton.onclick = function(){startLevel(1, ball_speed, 3)};
+  }
+
   // Player beat level 1
-  if (currentLevel == 1 && blocks.allCleared()) {
+  else if (currentLevel == 1 && blocks.allCleared()) {
     // Start game with increased acceleration ball
     redraw(); // draw the new frame
     gameoverEl.children[0].innerHTML = document.getElementById("game-level-won-popup").innerHTML;
     gameoverButton.innerHTML = "Play the second level";
-    gameoverButton.onclick = function(){startLevel(2, 2)};
+    gameoverButton.onclick = function(){startLevel(2, 2, player.lives)};
+    //document.getElementById("level").innerHTML = currentLevel;
   }
 
   // Player lost normally on level 1
   else if (currentLevel == 1) {
-    // Just restart the first level
-    gameoverEl.children[0].innerHTML = document.getElementById("game-over-popup").innerHTML;
+
+  	// Remove a life from the player
+    playerLives.children[player.lives].style.display = "none";
+    player.lives -= 1;
+
+    // Restart the first level
+    gameoverEl.children[0].innerHTML = document.getElementById("game-lost-popup").innerHTML;
     gameoverButton.innerHTML = "1st level, try again!";
-    gameoverButton.onclick = function(){startLevel(1, 0)};
+    gameoverButton.onclick = function(){startLevel(1, 0, player.lives)};
   }
 
   // Player beat level 2
@@ -363,29 +397,37 @@ function gameOver() {
     redraw(); // draw the new frame
     gameoverEl.children[0].innerHTML = document.getElementById("game-won-popup").innerHTML;
     gameoverButton.innerHTML = "Reset game";
-    gameoverButton.onclick = function(){startLevel(1, -2)};
+    gameoverButton.onclick = function(){startLevel(1, -2, 3)};
+    //document.getElementById("level").innerHTML = currentLevel;
   }
 
   // Player lost normally on level 2
   else if (currentLevel == 2) {
+
+    // Remove a life from the player
+    playerLives.children[player.lives].style.display = "none";
+    player.lives -= 1;
+
     // Start level 2 again
-    gameoverEl.children[0].innerHTML = document.getElementById("game-over-popup").innerHTML;
+    gameoverEl.children[0].innerHTML = document.getElementById("game-lost-popup").innerHTML;
     gameoverButton.innerHTML = "2nd level, try again!";
-    gameoverButton.onclick = function(){startLevel(2, 0)};
+    gameoverButton.onclick = function(){startLevel(2, 0, player.lives)};
   }
   gameOverPopup();
 }
 
-function startLevel(new_level, ball_speed) {
+function startLevel(new_level, ball_speed, player_lives) {
 	currentLevel = new_level;
 	startGame();
 	ball.updateSpeed(ball_speed);
+	player.lives = player_lives;
+	player.reset_lives();
 }
 
 function checkSpecialScenarios() {
   // Check if the player needs to shrink
   if (blocks.rowRevealed(4)) {
-    // If the orange row is revealed, shrink
+    // If the orange row is revealed, shrink the player
   	player.shrinkPaddle();
   }
 
