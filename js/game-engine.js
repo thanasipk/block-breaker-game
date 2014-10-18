@@ -59,8 +59,12 @@ Ball.prototype = {
 // Object containing the blocks
 function Blocks() {
   this.height = 20;
-  this.colors = [[], [], [], [], [], [], [], [], [], [], [], [], [], []];
+  this.colors = [[], [], [], [], [], [], [], 
+  				 [], [], [], [], [], [], []];
+  this.given_colors = {};
 }
+
+
 
 Blocks.prototype = {
   reset: function () {
@@ -77,13 +81,12 @@ Blocks.prototype = {
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 	]
     this.width = Math.floor(canvas.width / this.loc[0].length);
+    this.initGivenColors(); // Establish the block colours
 
-    for (var row = 0; row < this.loc.length; row++){
+    // Assign the block colours according to their given row color.
+    for (var row = 0; row < this.loc.length; row++) {
       for (var col = 0; col < this.loc[row].length; col++) {
-        this.colors[row][col] = "rgb(" +
-          randomFromTo(100, 255) + "," +
-          randomFromTo(100, 255) + "," +
-          randomFromTo(100, 255) + ")";
+        this.colors[row][col] = this.given_colors[row];
       }
     }
   },
@@ -158,6 +161,23 @@ Blocks.prototype = {
         }
       }
     }
+  },
+  initGivenColors: function() {
+  	// Red block row
+    this.given_colors[1] = "rgb(231, 76, 60)";
+    this.given_colors[2] = this.given_colors[1];
+
+    // Orange block row
+    this.given_colors[3] = "rgb(230, 126, 34)";
+    this.given_colors[4] = this.given_colors[3];
+
+    // Green block row
+    this.given_colors[5] = "rgb(39, 174, 96)";
+    this.given_colors[6] = this.given_colors[5];
+
+    // Yellow block row
+    this.given_colors[7] = "rgb(241, 196, 15)";
+    this.given_colors[8] = this.given_colors[7];
   }
 };
 
