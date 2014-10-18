@@ -420,7 +420,6 @@ function checkSpecialScenarios() {
   if (blocks.rowRevealed(4)) {
     // If the orange row is revealed, shrink the player
   	player.shrinkPaddle();
-
   	// INCREASE SPEED HERE TOO
   }
 

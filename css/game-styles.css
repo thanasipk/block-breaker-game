@@ -26,6 +26,7 @@
   font-family: 'Share Tech', sans-serif;
   border-radius: 10px;
   opacity: 0.95;
+  font-size: 1.1em;
 }
 
 #game-lost-popup,
@@ -36,8 +37,8 @@
 }
 
 .popup-emoji {
-  width: 25px; 
-  height: 25px; 
+  width: 35px; 
+  height: 35px; 
   display: inline;
 }
 
@@ -50,7 +51,7 @@
   cursor: pointer;
   color: #ffffff;
   font-family: 'Share Tech', sans-serif;
-  font-size: 17px;
+  font-size: 25px;
   padding: 16px 31px;
   text-decoration: none;
   text-shadow: 0px 1px 0px #2f6627;
@@ -70,6 +71,7 @@
 .table-data {
   position: fixed;
   margin: 0px 20px;
+  margin-top: -10px;
 }
 
 #points {
