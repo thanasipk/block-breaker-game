@@ -20,7 +20,7 @@ Ball.prototype = {
     this.y = this.startY;
   },
   draw: function () {
-    context.fillStyle = "#00c39c";
+    context.fillStyle = "#34495e";
     context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     context.fill();
   },
@@ -59,6 +59,7 @@ Ball.prototype = {
 // Object containing the blocks
 function Blocks() {
   this.height = 20;
+  this.colors = [[], [], [], [], [], []];
 }
 
 Blocks.prototype = {
@@ -66,13 +67,20 @@ Blocks.prototype = {
     // put the blocks back into place
     this.loc = [
       [0, 0, 0, 0, 0, 0, 0, 0],
-      [1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1]
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 1]
     ]
-    this.colors = [[], [], [], [], [], []];
+    // this.loc = [
+    //   [0, 0, 0, 0, 0, 0, 0, 0],
+    //   [1, 1, 1, 1, 1, 1, 1, 1],
+    //   [1, 1, 1, 1, 1, 1, 1, 1],
+    //   [1, 1, 1, 1, 1, 1, 1, 1],
+    //   [1, 1, 1, 1, 1, 1, 1, 1],
+    //   [1, 1, 1, 1, 1, 1, 1, 1]
+    // ]
     this.width = Math.floor(canvas.width / this.loc[0].length);
 
     for (var row = 0; row < this.loc.length; row++){
@@ -171,7 +179,7 @@ Player.prototype = {
     this.y = canvas.height - this.height;
   },
   draw: function () {
-    context.fillStyle = "#66ccff";
+    context.fillStyle = "#34495e";
     context.fillRect(
       this.x,
       this.y,
@@ -254,23 +262,15 @@ function startGame() {
   resetStates();
   points = 0;
   // start game loop
-  gameLoop = setInterval(draw, 10);
+  gameLoop = setInterval(update, 10);
 }
 
 // Update the canvas
-function draw() {
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  context.beginPath();
-
-  // Draw game objects
-  blocks.draw();
-  player.draw();
-  ball.draw();
-  context.closePath();
-
+function update() {
   // Update game objects
-  ball.updateSpeed(0);
   ball.updatePosition();
+
+  redraw();
 
   player.detectCollision();
   blocks.detectCollision();
@@ -281,30 +281,71 @@ function draw() {
   
   // Current game finished
   if (blocks.allCleared()) {
-  	handleGameOver();
+  	gameOver();
  }
+}
+
+function redraw() {
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.beginPath();
+
+  // Draw game objects
+  blocks.draw();
+  player.draw();
+  ball.draw();
+
+  context.closePath();
 }
 
 function randomFromTo(from, to) {
   return Math.floor(Math.random() * (to + 1 - from) + from);
 }
 
-function gameOver() {
+function gameOverPopup() {
   clearInterval(gameLoop);
   gameoverEl.style.display = "block";
   gameoverButton.focus();
 }
 
-function handleGameOver() {
-  // First time win, move to second level
- 	if (currentLevel == 1) {
-    currentLevel = 2;
+function gameOver() {
+
+  // Player beat level 1
+  if (currentLevel == 1 && blocks.allCleared()) {
     // Start game with increased acceleration ball
-  	// Implementing this
+    redraw(); // draw the new frame
+    gameoverEl.children[0].innerHTML = document.getElementById("game-level-won-popup").innerHTML;
+    gameoverButton.innerHTML = "Play the second level";
+    gameoverButton.onclick = function(){startLevel(2, 2)};
   }
-  else {
-  	// They were on the second level already, then beat the game
-		document.getElementById("gameover").innerHTML = "You beat the game! :D";
-		gameOver();
+
+  // Player lost normally on level 1
+  else if (currentLevel == 1) {
+    // Just restart the first level
+    gameoverEl.children[0].innerHTML = document.getElementById("game-over-popup").innerHTML;
+    gameoverButton.innerHTML = "1st level, try again!";
+    gameoverButton.onclick = function(){startLevel(1, 0)};
   }
+
+  // Player beat level 2
+  else if (currentLevel == 2 && blocks.allCleared()) {
+    redraw(); // draw the new frame
+    gameoverEl.children[0].innerHTML = document.getElementById("game-won-popup").innerHTML;
+    gameoverButton.innerHTML = "Reset game";
+    gameoverButton.onclick = function(){startLevel(1, -2)};
+  }
+
+  // Player lost normally on level 2
+  else if (currentLevel == 2) {
+    // Start level 2 again
+    gameoverEl.children[0].innerHTML = document.getElementById("game-over-popup").innerHTML;
+    gameoverButton.innerHTML = "2nd level, try again!";
+    gameoverButton.onclick = function(){startLevel(2, 0)};
+  }
+  gameOverPopup();
+}
+
+function startLevel(new_level, ball_speed) {
+	currentLevel = new_level;
+	startGame();
+	ball.updateSpeed(ball_speed);
 }
