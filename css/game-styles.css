@@ -7,6 +7,7 @@
   font-family: 'Share Tech', sans-serif;
   font-size: 3em;
   text-align: center;
+  padding-bottom: 10px;
 }
 
 #gameCanvas {
@@ -56,6 +57,10 @@
   border: none;
 }
 
+#player-lives-row {
+  display: block !important;
+}
+
 .player-life {
   display: inline;
   width: 35px;
@@ -65,4 +70,8 @@
 .table-data {
   position: fixed;
   margin: 0px 20px;
+}
+
+#points {
+  display: inline;
 }
