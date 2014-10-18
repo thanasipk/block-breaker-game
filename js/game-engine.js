@@ -194,7 +194,7 @@ Blocks.prototype = {
 function Player() {
   this.lives = 3;
   this.height = 25;
-  this.width  = 150;
+  this.width  = 200;
   this.has_shrunk = false;
 }
 
@@ -205,7 +205,7 @@ Player.prototype = {
   	this.lives = 3;
 
     /* Reset width shrinking */
-    this.width  = 150;
+    this.width  = 200;
     this.has_shrunk = false;
 
     /* center the paddle */
@@ -254,11 +254,11 @@ Player.prototype = {
   },
   reset_lives: function() {
   	for (var hearts = 0; hearts < this.lives; hearts++) {
-	  playerLives.children[hearts + 1].style.display = "inline";  		
+	  playerLives.children[hearts].style.display = "inline";  		
   	}
   },
   loseLife: function() {
-    playerLives.children[this.lives].style.display = "none";
+    playerLives.children[this.lives - 1].style.display = "none";
     this.lives -= 1;
   }
 };
@@ -279,7 +279,7 @@ function init() {
   canvas = document.getElementById("gameCanvas");
   context = canvas.getContext('2d');
   canvas.height = 500;
-  canvas.width  = 800;
+  canvas.width  = 1280;
 
   // setup objects
   ball = new Ball(100, 200, 15);
@@ -359,7 +359,7 @@ function gameOver() {
 
   // Player ran out of lives
   if (player.lives == 1 && !blocks.allCleared()) {
-    playerLives.children[player.lives].style.display = "none";
+    playerLives.children[player.lives - 1].style.display = "none";
     player.lives -= 1;
 
     redraw(); // draw the new frame
@@ -420,6 +420,8 @@ function checkSpecialScenarios() {
   if (blocks.rowRevealed(4)) {
     // If the orange row is revealed, shrink the player
   	player.shrinkPaddle();
+
+  	// INCREASE SPEED HERE TOO
   }
 
   // Check if the player has beat the level

@@ -1,6 +1,6 @@
 .scoreboard {
   height: 100px;
-  width: 800px;
+  width: 1280px;
   border: 2px solid #2c3e50;
   background: #2c3e50;
   color: #ecf0f1;
@@ -17,7 +17,7 @@
 #gameover {
   position: absolute;
   top: 250px;
-  left: 260px;
+  left: 450px;
   background: #e7e7e7;
   padding: 2em 5em;
   text-align: center;
@@ -56,13 +56,13 @@
   border: none;
 }
 
-#play-again:active {
-  position: relative;
-  top: 1px;
-}
-
 .player-life {
   display: inline;
   width: 35px;
   height: 35px;
+}
+
+.table-data {
+  position: fixed;
+  margin: 0px 20px;
 }

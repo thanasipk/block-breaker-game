@@ -15,22 +15,24 @@
 
       <!-- game screen -->
       <section class="scoreboard">
-        
-        <div id="player-lives-row" style="display:block !important">
-          <div style="display:inline;">Lives Left</div>
-          <img src="img/life.png" class="player-life" />
-          <img src="img/life.png" class="player-life" />
-          <img src="img/life.png" class="player-life" />
-        </div>
-        
-        <div id="name-info-row" style="display:block !important">
-          <div style="display:inline;">Score</div>
-        </div>
-        
-        <div id="number-row" style="display:block !important">
-          <div style="display:inline;" id="points">0</span>      
-        </div>
-      
+        <table>
+          <tr>
+            <td>Lives</td>
+            <td class="table-data">        
+              <div id="player-lives-row" style="display:block !important">
+                <img src="img/life.png" class="player-life" />
+                <img src="img/life.png" class="player-life" />
+                <img src="img/life.png" class="player-life" />
+              </div>
+            </td>    
+          </tr>
+          <tr>
+            <td>Score</td>
+            <td class="table-data">  
+              <div style="display:inline;" id="points">0</span>  
+            </td>
+           </tr>
+        </table>
       </section>
 
       <!-- game screen -->
