@@ -354,7 +354,7 @@ function gameOverPopup() {
 function gameOver() {
 
   // Player ran out of lives
-  if (player.lives == 1) {
+  if (player.lives == 1 && !blocks.allCleared()) {
     playerLives.children[player.lives].style.display = "none";
     player.lives -= 1;
 
