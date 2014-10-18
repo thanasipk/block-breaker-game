@@ -40,6 +40,7 @@
   width: 35px; 
   height: 35px; 
   display: inline;
+  margin-bottom: -8px;
 }
 
 #play-again {
