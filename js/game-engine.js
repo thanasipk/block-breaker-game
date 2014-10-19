@@ -12,12 +12,14 @@ function Ball(x, y, radius) {
   this.radius = radius;
   this.speedX = 5;
   this.speedY = 5;
+  this.hasSpeedBonus = false;
 }
 
 Ball.prototype = {
   reset: function () {
     this.x = this.startX;
     this.y = this.startY;
+    this.hasSpeedBonus = false;
   },
   draw: function () {
     context.fillStyle = "#34495e";
@@ -28,16 +30,16 @@ Ball.prototype = {
     this.x += this.speedX;
     this.y += this.speedY;
   },
-  updateSpeed: function (acceleration_factor) {
+  updateSpeed: function (accelerationFactor) {
     if (this.speedX > 0) {
-      this.speedX += acceleration_factor;
+      this.speedX += accelerationFactor;
     } else {
-      this.speedX -= acceleration_factor;
+      this.speedX -= accelerationFactor;
     }
     if (this.speedY > 0) {
-      this.speedY += acceleration_factor;
+      this.speedY += accelerationFactor;
     } else {
-      this.speedY -= acceleration_factor;
+      this.speedY -= accelerationFactor;
     }
   },
   handleBoundaryCollision: function () {
@@ -53,6 +55,13 @@ Ball.prototype = {
     if (this.y  + this.radius > canvas.height) {
       gameOver();
     }
+  },
+  giveBonusSpeed: function() {
+  	// Prevents repeated speed increases
+  	if (!this.hasSpeedBonus) {
+		this.updateSpeed(1);	
+  	}
+  	this.hasSpeedBonus = true;
   }
 };
 
@@ -61,10 +70,8 @@ function Blocks() {
   this.height = 20;
   this.colors = [[], [], [], [], [], [], [], 
   				 [], [], [], [], [], [], []];
-  this.given_colors = {};
+  this.givenColors = {};
 }
-
-
 
 Blocks.prototype = {
   reset: function () {
@@ -83,18 +90,13 @@ Blocks.prototype = {
 
     this.width = Math.floor(canvas.width / this.loc[0].length);
     this.initGivenColors(); // Establish the block colours
-
-    // Assign the block colours according to their given row color.
-    for (var row = 0; row < this.loc.length; row++) {
-      for (var col = 0; col < this.loc[row].length; col++) {
-        this.colors[row][col] = this.given_colors[row];
-      }
-    }
   },
   draw: function () {
     for (var row = 0; row < this.loc.length; row++){
       for (var col = 0; col < this.loc[row].length; col++) {
+        // Draw and colour each block.
         this.drawSingleBlock(col, row, this.loc[row][col]);
+        this.colors[row][col] = this.givenColors[row];
       }
     }
   },
@@ -118,26 +120,26 @@ Blocks.prototype = {
     context.stroke();
     context.restore();
   },
-  hasCollide: function (block_x, block_y) {
+  hasCollide: function (blockX, blockY) {
     var has_collide = false;
 
     has_collide =
-      ball.x + ball.radius >= block_x * this.width &&
-      ball.x - ball.radius <= (block_x + 1) * this.width &&
-      ball.y + ball.radius >= block_y * this.height &&
-      ball.y - ball.radius <= (block_y + 1) * this.height
+      ball.x + ball.radius >= blockX * this.width &&
+      ball.x - ball.radius <= (blockX + 1) * this.width &&
+      ball.y + ball.radius >= blockY * this.height &&
+      ball.y - ball.radius <= (blockY + 1) * this.height
 
     // has collide from side
     if (has_collide &&
-        !(ball.x + ball.radius + ball.speedX >= block_x * this.width &&
-          ball.x - ball.radius - ball.speedX <= (block_x + 1) * this.width)) {
+        !(ball.x + ball.radius + ball.speedX >= blockX * this.width &&
+          ball.x - ball.radius - ball.speedX <= (blockX + 1) * this.width)) {
       ball.speedX *= -1;
     }
 
     // has collide from top or bottom
     if (has_collide &&
-        !(ball.y + ball.radius + ball.speedY >= block_y * this.height &&
-          ball.y - ball.radius - ball.speedY <= (block_y + 1) * this.height)) {
+        !(ball.y + ball.radius + ball.speedY >= blockY * this.height &&
+          ball.y - ball.radius - ball.speedY <= (blockY + 1) * this.height)) {
       ball.speedY *= -1;
     }
 
@@ -157,36 +159,43 @@ Blocks.prototype = {
     for (var row = 0; row < this.loc.length; row++){
       for (var col = 0; col < this.loc[row].length; col++) {
         if (this.loc[row][col] && this.hasCollide(col, row)) {
+          this.detectPointValue(this.colors[row][col]);
           this.loc[row][col] = 0;
-          points += 100;
+          totalHits++;
         }
       }
     }
   },
-  initGivenColors: function() {
-  	// Red block row
-    this.given_colors[1] = "rgb(231, 76, 60)";
-    this.given_colors[2] = this.given_colors[1];
+  initGivenColors: function () {
+    red    = this.givenColors[1] = this.givenColors[2] = "rgb(231, 76, 60)";
+    orange = this.givenColors[3] = this.givenColors[4] = "rgb(230, 126, 34)";
+    green  = this.givenColors[5] = this.givenColors[6] = "rgb(39, 174, 96)";
+    yellow = this.givenColors[7] = this.givenColors[8] = "rgb(241, 196, 15)";
 
-    // Orange block row
-    this.given_colors[3] = "rgb(230, 126, 34)";
-    this.given_colors[4] = this.given_colors[3];
-
-    // Green block row
-    this.given_colors[5] = "rgb(39, 174, 96)";
-    this.given_colors[6] = this.given_colors[5];
-
-    // Yellow block row
-    this.given_colors[7] = "rgb(241, 196, 15)";
-    this.given_colors[8] = this.given_colors[7];
   },
-  rowRevealed: function(row_number) {
-  	// Where row_number=1 is the top-most visible row
-  	// If the row below row_number has a block missing, return true
-	if (eval(this.loc[row_number + 1].join("+")) < this.loc[0].length) {
+  rowRevealed: function (rowNumber) {
+  	// Where rowNumber=1 is the top-most visible row
+  	// If the row below rowNumber has a block missing, return true
+	if (eval(this.loc[rowNumber + 1].join("+")) < this.loc[0].length) {
 		return true;
 	}
 	return false;
+  },
+  detectPointValue: function (singleBlock) {
+  	switch (singleBlock) {
+  	  case red:
+  	    points += 7;
+  	  	break;
+  	  case orange:
+  	  	points += 5;
+  	  	break;
+  	  case green:
+  	  	points += 3;
+  	  	break;
+  	  case yellow:
+  	    points += 1;
+  	  	break;
+  	}
   }
 };
 
@@ -195,7 +204,7 @@ function Player() {
   this.lives = 3;
   this.height = 25;
   this.width  = 200;
-  this.has_shrunk = false;
+  this.hasShrunk = false;
 }
 
 Player.prototype = {
@@ -206,7 +215,7 @@ Player.prototype = {
 
     /* Reset width shrinking */
     this.width  = 200;
-    this.has_shrunk = false;
+    this.hasShrunk = false;
 
     /* center the paddle */
     this.x = canvas.width / 2 - this.width / 2;
@@ -247,12 +256,12 @@ Player.prototype = {
   },
   shrinkPaddle: function() {
   	// Prevents repeated paddle shrinking
-  	if (!this.has_shrunk) {
+  	if (!this.hasShrunk) {
 		this.width /= 2;	
   	}
-  	this.has_shrunk = true;
+  	this.hasShrunk = true;
   },
-  reset_lives: function() {
+  resetLives: function() {
   	for (var hearts = 0; hearts < this.lives; hearts++) {
 	  playerLives.children[hearts].style.display = "inline";  		
   	}
@@ -265,13 +274,14 @@ Player.prototype = {
 
 // Other game elements
 var currentLevel = 1;
-var points;
+var points = 0;
 var gameLoop;
 var ball;
 var blocks;
 var player;
 var gameoverEl;
 var gameoverButton;
+var totalHits = 0;
 
 // initialize the default global parameters
 function init() {
@@ -311,7 +321,6 @@ function resetStates() {
 // Start the very first game
 function startGame() {
   resetStates();
-  points = 0;
   // start game loop
   gameLoop = setInterval(update, 10);
 }
@@ -328,7 +337,11 @@ function update() {
   ball.handleBoundaryCollision();
 
   player.updatePosition();
-  document.getElementById("points").innerHTML = points++;
+  document.getElementById("points").innerHTML = points;
+
+  console.log(ball.speedX);
+  console.log(ball.speedY);
+  console.log(totalHits);
 
   checkSpecialScenarios();
 }
@@ -359,25 +372,21 @@ function gameOver() {
 
   // Player ran out of lives
   if (player.lives == 1 && !blocks.allCleared()) {
-    playerLives.children[player.lives - 1].style.display = "none";
-    player.lives -= 1;
+  	player.loseLife();
+    points = 0;
 
     redraw(); // draw the new frame
     setPopup("game-over-popup", "Lemme try again!");   
 
-    // Default ball speed
-    if (currentLevel == 1) var ball_speed = 0;
-    if (currentLevel == 2) var ball_speed = -2;
-
-    gameoverButton.onclick = function(){startLevel(1, ball_speed, 3)};
+    gameoverButton.onclick = function(){startLevel(1, 5, 3)};
   }
 
   // Player beat level 1
   else if (currentLevel == 1 && blocks.allCleared()) {
     // Start game with increased acceleration ball
-    redraw(); // draw the new frame
+    redraw();
     setPopup("game-level-won-popup", "Play the second level");   
-    gameoverButton.onclick = function(){startLevel(2, 2, player.lives)};
+    gameoverButton.onclick = function(){startLevel(2, 6, player.lives)};
     //document.getElementById("level").innerHTML = currentLevel;
   }
 
@@ -385,15 +394,15 @@ function gameOver() {
   else if (currentLevel == 1) {
   	player.loseLife();
     // Restart the first level
-    setPopup("game-lost-popup", "1st level, try again!"); 
-    gameoverButton.onclick = function(){startLevel(1, 0, player.lives)};
+    setPopup("game-lost-popup", "1st level, try again!");
+    gameoverButton.onclick = function(){startLevel(1, 5, player.lives)};
   }
 
   // Player beat level 2
   else if (currentLevel == 2 && blocks.allCleared()) {
     redraw(); // draw the new frame
     setPopup("game-won-popup", "Reset game"); 
-    gameoverButton.onclick = function(){startLevel(1, -2, 3)};
+    gameoverButton.onclick = function(){startLevel(1, 5, 3)};
     //document.getElementById("level").innerHTML = currentLevel;
   }
 
@@ -402,34 +411,43 @@ function gameOver() {
   	player.loseLife();
     // Start level 2 again
     setPopup("game-lost-popup", "2nd level, try again!"); 
-    gameoverButton.onclick = function(){startLevel(2, 0, player.lives)};
+    gameoverButton.onclick = function(){startLevel(2, 5, player.lives)};
   }
   gameOverPopup();
 }
 
-function startLevel(new_level, ball_speed, player_lives) {
-	currentLevel = new_level;
+function startLevel(newLevel, ballSpeed, playerLivesLeft) {
+	currentLevel = newLevel;
 	startGame();
-	ball.updateSpeed(ball_speed);
-	player.lives = player_lives;
-	player.reset_lives();
+	ball.speedX = ball.speedY = ballSpeed;
+	player.lives = playerLivesLeft;
+	player.resetLives();
 }
 
 function checkSpecialScenarios() {
-  // Check if the player needs to shrink
+  // Increase ball speed every 4 and 12 hits
+  if (totalHits % 4 == 0 || totalHits % 12 == 0) {
+	  ball.updateSpeed(0.05);
+  	totalHits++;
+  }
+
+  // If the orange row is revealed, shrink the player
   if (blocks.rowRevealed(4)) {
-    // If the orange row is revealed, shrink the player
   	player.shrinkPaddle();
-  	// INCREASE SPEED HERE TOO
+  }
+
+  // If the red row is revealed, increase the ball speed
+  if (blocks.rowRevealed(2)) {
+    ball.giveBonusSpeed();
   }
 
   // Check if the player has beat the level
   if (blocks.allCleared()) {
   	gameOver();
- }
+  }
 }
 
-function setPopup(popup_id, popup_content) {
-	gameoverEl.children[0].innerHTML = document.getElementById(popup_id).innerHTML;
-	gameoverButton.innerHTML = popup_content;
+function setPopup(popupID, popupContent) {
+	gameoverEl.children[0].innerHTML = document.getElementById(popupID).innerHTML;
+	gameoverButton.innerHTML = popupContent;
 }
