@@ -2,17 +2,21 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>block-breaker</title>
+    <title>Block-Breaker Game</title>
     <meta name="description" content="ATARI breakout implemented with Canvas">
+    
+    <!-- Style sheets -->
     <link rel="stylesheet" type="text/css" href="css/game-styles.css">
+
+    <!-- Import Google Fonts -->
     <link href='http://fonts.googleapis.com/css?family=Share+Tech' rel='stylesheet' type='text/css'>
-    <script src="js/input.js"></script>
-    <script src="js/game-engine.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
   </head>
 
   <body>
+    <h1 class="game-title">Block Breaker</h1>
+    <h6 class="authors">Thanasi Karachotzitis, Sunny Li</h6>
     <section class="game-wrapper">
-
       <!-- game screen -->
       <section class="scoreboard">
         <table>
@@ -29,7 +33,7 @@
           <tr>
             <td>Score</td>
             <td class="table-data">  
-              <div id="points">0</span>
+              <div id="points">0</div>
             </td>
            </tr>
         </table>
@@ -41,7 +45,7 @@
       </canvas>
 
       <section>
-        <p>Use the left and right key on your keyboard to move the paddle</p>
+        <p class="instructions">Use the left and right key on your keyboard to move the paddle</p>
       </section>
 
       <div id="gameover">
@@ -74,4 +78,6 @@
 
     </section>
   </body>
+  <script src="js/input.js"></script>
+  <script src="js/game-engine.js"></script>
 </html>

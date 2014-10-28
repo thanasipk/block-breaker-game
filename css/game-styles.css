@@ -1,3 +1,32 @@
+body {
+  background: #2c3e50;
+}
+
+.game-wrapper {
+  margin: auto !important;
+  width: 1200px;
+  margin-top: 3% !important;
+}
+
+.instructions,
+.game-title,
+.authors {
+  color: #ecf0f1;
+  font-family: 'Share Tech', sans-serif;
+  text-align: center;
+  font-size: 2em;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.game-title {
+  font-size: 2.5em;
+}
+
+
+.authors {
+  font-size: 1em;
+}
+
 .scoreboard {
   height: 100px;
   width: 1280px;
@@ -17,8 +46,8 @@
 
 #gameover {
   position: absolute;
-  top: 250px;
-  left: 450px;
+  top: 425px;
+  left: 775px;
   background: #e7e7e7;
   padding: 2em 5em;
   text-align: center;
