@@ -1,13 +1,11 @@
 # README #
 
-### Apache Instructions
-None
-
 ### How to Start it
 Start `index.html` in the Chromium browser (or Google Chrome)
 
 ### How it Works
 The game is structured into a few core functions:
+
 -`init()`
 
 -`startGame()`
@@ -17,17 +15,17 @@ The game is structured into a few core functions:
 Now we will detail how these functions interact to 
 create the game:
 
-### `init()`
+##### `init()`
 	-Called via an event listener when the DOM is loaded.
 	-Initializes game variables and objects, including
 	the Ball, Player and Blocks.
 	-Calls `startGame()` to begin a single game.
 
-### `startGame()`
+##### `startGame()`
 	-Calls `resetStates()` to initialize the Ball, Player and Blocks objects with their default values and start positions on the canvas.
 	-Creates an interval which calls `update()` every 10 milliseconds, effectively drawing the frames for the game.
 
-### `update()`
+##### `update()`
 	-Draws the position of each object, Ball, Player and Blocks.
 	-Detects collision between any of the entities and the canvas dimensions.
 	-Handles special scenarios such as any collisions that end the game,  deducting lives from the player when they lose a game and starting a new level when they beat the first level.
